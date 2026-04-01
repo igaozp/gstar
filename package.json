@@ -1,0 +1,28 @@
+{
+  "name": "gstar",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nitro dev",
+    "build": "nitro build",
+    "start": "node .output/server/index.mjs",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "nitropack": "^2.10.4",
+    "better-sqlite3": "^12.8.0",
+    "drizzle-orm": "^0.38.0",
+    "sqlite-vec": "^0.1.9",
+    "ofetch": "^1.4.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.11",
+    "drizzle-kit": "^0.29.0",
+    "typescript": "^5.5.0"
+  }
+}
