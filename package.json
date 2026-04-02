@@ -8,6 +8,8 @@
     "dev": "nitro dev",
     "build": "nitro build",
     "start": "node .output/server/index.mjs",
+    "app:dev": "npm --prefix app run dev",
+    "app:build": "npm --prefix app run build",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",

@@ -1,0 +1,60 @@
+---
+import Base from '@/layouts/Base.astro'
+import { StarCard } from '@/components/stars/StarCard'
+import { StarFilters } from '@/components/stars/StarFilters'
+import { Pagination } from '@/components/stars/Pagination'
+import { Skeleton } from '@/components/ui/skeleton'
+import { api } from '@/lib/api'
+
+const url = Astro.url
+const page = Math.max(1, parseInt(url.searchParams.get('page') ?? '1'))
+const language = url.searchParams.get('language') ?? undefined
+const topic = url.searchParams.get('topic') ?? undefined
+const analyzed = (url.searchParams.get('analyzed') as 'true' | 'false') ?? undefined
+
+let result
+try {
+  result = await api.stars({ page, limit: 24, language, topic, analyzed })
+} catch {
+  result = { data: [], meta: { page: 1, limit: 24, total: 0, pages: 0 } }
+}
+
+// Fetch all to derive language list (limited: get first 200 to extract unique languages)
+let allLanguages: string[] = []
+try {
+  const all = await api.stars({ limit: 100 })
+  allLanguages = [...new Set(
+    all.data.map((s) => s.language).filter((l): l is string => !!l)
+  )].sort()
+} catch {}
+
+const { data: stars, meta } = result
+---
+
+<Base title="Stars">
+  <div class="space-y-6">
+    <div class="flex items-center justify-between flex-wrap gap-4">
+      <div>
+        <h1 class="text-2xl font-bold">Starred Repositories</h1>
+        <p class="text-muted-foreground text-sm mt-1">
+          {meta.total.toLocaleString()} total
+        </p>
+      </div>
+      <StarFilters client:load languages={allLanguages} />
+    </div>
+
+    {stars.length === 0 ? (
+      <div class="rounded-lg border border-dashed p-12 text-center text-muted-foreground">
+        No repositories found. Try adjusting your filters or sync your stars first.
+      </div>
+    ) : (
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        {stars.map((star) => (
+          <StarCard star={star} href={`/stars/${star.id}`} />
+        ))}
+      </div>
+    )}
+
+    <Pagination client:load page={meta.page} pages={meta.pages} total={meta.total} />
+  </div>
+</Base>

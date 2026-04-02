@@ -8,3 +8,8 @@ data/
 *.db
 *.db-shm
 *.db-wal
+.claude/
+app/.env
+app/node_modules/
+app/.astro/
+app/dist/

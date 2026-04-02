@@ -1,0 +1,114 @@
+---
+import Base from '@/layouts/Base.astro'
+import { Badge } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
+import { api } from '@/lib/api'
+
+const { id } = Astro.params
+
+let star
+try {
+  const res = await api.star(id!)
+  star = res.data
+} catch {
+  return Astro.redirect('/stars')
+}
+
+function fmt(iso: string) {
+  return new Date(iso).toLocaleDateString('en-US', {
+    year: 'numeric', month: 'short', day: 'numeric',
+  })
+}
+---
+
+<Base title={star.fullName}>
+  <div class="max-w-3xl mx-auto space-y-6">
+    <div>
+      <div class="flex items-center gap-3 flex-wrap">
+        <h1 class="text-2xl font-bold">{star.fullName}</h1>
+        {star.isArchived && <Badge variant="outline">archived</Badge>}
+        {star.isFork && <Badge variant="outline">fork</Badge>}
+      </div>
+      {star.description && (
+        <p class="text-muted-foreground mt-2">{star.description}</p>
+      )}
+      <div class="flex items-center gap-4 mt-3 flex-wrap">
+        <a
+          href={star.htmlUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-sm text-blue-600 hover:underline inline-flex items-center gap-1"
+        >
+          View on GitHub →
+        </a>
+        {star.homepage && (
+          <a
+            href={star.homepage}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-sm text-blue-600 hover:underline"
+          >
+            Homepage →
+          </a>
+        )}
+      </div>
+    </div>
+
+    <Separator />
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+      <div>
+        <div class="text-muted-foreground text-xs uppercase tracking-wide mb-1">Stars</div>
+        <div class="font-semibold">{star.stargazersCount.toLocaleString()}</div>
+      </div>
+      <div>
+        <div class="text-muted-foreground text-xs uppercase tracking-wide mb-1">Forks</div>
+        <div class="font-semibold">{star.forksCount.toLocaleString()}</div>
+      </div>
+      <div>
+        <div class="text-muted-foreground text-xs uppercase tracking-wide mb-1">Language</div>
+        <div class="font-semibold">{star.language ?? '—'}</div>
+      </div>
+      <div>
+        <div class="text-muted-foreground text-xs uppercase tracking-wide mb-1">Starred</div>
+        <div class="font-semibold">{fmt(star.starredAt)}</div>
+      </div>
+    </div>
+
+    {star.topics && star.topics.length > 0 && (
+      <div>
+        <h2 class="text-sm font-semibold mb-2 text-muted-foreground uppercase tracking-wide">Topics</h2>
+        <div class="flex flex-wrap gap-2">
+          {star.topics.map((t: string) => (
+            <Badge variant="secondary">{t}</Badge>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <Separator />
+
+    {star.aiSummary ? (
+      <div>
+        <h2 class="text-sm font-semibold mb-2 text-muted-foreground uppercase tracking-wide">AI Summary</h2>
+        <p class="text-sm leading-relaxed">{star.aiSummary}</p>
+        {star.aiKeywords && star.aiKeywords.length > 0 && (
+          <div class="flex flex-wrap gap-1.5 mt-3">
+            {star.aiKeywords.map((kw: string) => (
+              <Badge variant="outline" class="text-xs">{kw}</Badge>
+            ))}
+          </div>
+        )}
+        <div class="text-xs text-muted-foreground mt-3 flex gap-4 flex-wrap">
+          {star.analysisModel && <span>Model: {star.analysisModel}</span>}
+          {star.analyzedAt && <span>Analyzed: {fmt(star.analyzedAt)}</span>}
+          {star.embeddingModel && <span>Embedding: {star.embeddingModel} ({star.dimensions}d)</span>}
+        </div>
+      </div>
+    ) : (
+      <div class="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
+        This repository has not been analyzed yet. Run the analyzer to generate an AI summary.
+      </div>
+    )}
+  </div>
+</Base>

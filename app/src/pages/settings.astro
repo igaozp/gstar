@@ -1,0 +1,153 @@
+---
+import Base from '@/layouts/Base.astro'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
+import { SyncButton } from '@/components/settings/SyncButton'
+import { api } from '@/lib/api'
+
+let health
+let config
+
+try {
+  health = await api.health()
+} catch {
+  health = null
+}
+
+try {
+  config = await api.config()
+} catch {
+  config = null
+}
+
+const stars = health?.data?.stars
+const lastSync = health?.data?.lastSync
+---
+
+<Base title="Settings">
+  <div class="max-w-2xl mx-auto space-y-6">
+    <h1 class="text-2xl font-bold">Settings</h1>
+
+    <!-- Status -->
+    <Card>
+      <CardHeader>
+        <CardTitle class="text-base">Status</CardTitle>
+      </CardHeader>
+      <CardContent class="space-y-4">
+        {stars ? (
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+            <div>
+              <div class="text-muted-foreground text-xs mb-1">Total</div>
+              <div class="font-semibold text-lg">{stars.total.toLocaleString()}</div>
+            </div>
+            <div>
+              <div class="text-muted-foreground text-xs mb-1">Analyzed</div>
+              <div class="font-semibold text-lg text-green-600">{stars.analyzed.toLocaleString()}</div>
+            </div>
+            <div>
+              <div class="text-muted-foreground text-xs mb-1">Pending</div>
+              <div class="font-semibold text-lg text-yellow-600">{stars.pending.toLocaleString()}</div>
+            </div>
+            <div>
+              <div class="text-muted-foreground text-xs mb-1">Embedded</div>
+              <div class="font-semibold text-lg text-blue-600">{stars.embedded.toLocaleString()}</div>
+            </div>
+          </div>
+        ) : (
+          <p class="text-sm text-muted-foreground">Could not reach backend.</p>
+        )}
+
+        {lastSync && (
+          <>
+            <Separator />
+            <div class="text-sm space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="text-muted-foreground">Last sync:</span>
+                <Badge variant={lastSync.status === 'completed' ? 'default' : lastSync.status === 'failed' ? 'destructive' : 'secondary'}>
+                  {lastSync.status}
+                </Badge>
+                <span class="text-muted-foreground">{lastSync.syncType}</span>
+              </div>
+              <div class="text-muted-foreground text-xs">
+                {new Date(lastSync.startedAt).toLocaleString()} · {lastSync.reposSynced} synced
+              </div>
+            </div>
+          </>
+        )}
+      </CardContent>
+    </Card>
+
+    <!-- Sync -->
+    <Card>
+      <CardHeader>
+        <CardTitle class="text-base">Sync</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p class="text-sm text-muted-foreground mb-4">
+          Incremental sync fetches only new stars since the last sync. Full sync re-fetches everything.
+        </p>
+        <SyncButton client:load />
+      </CardContent>
+    </Card>
+
+    <!-- Config -->
+    {config && (
+      <>
+        <Card>
+          <CardHeader>
+            <CardTitle class="text-base">GitHub</CardTitle>
+          </CardHeader>
+          <CardContent class="space-y-2 text-sm">
+            <div class="flex justify-between">
+              <span class="text-muted-foreground">Username</span>
+              <span class="font-mono">{config.data.github.username ?? '—'}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-muted-foreground">Token</span>
+              <Badge variant={config.data.github.configured ? 'default' : 'destructive'}>
+                {config.data.github.configured ? 'configured' : 'not set'}
+              </Badge>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle class="text-base">LLM</CardTitle>
+          </CardHeader>
+          <CardContent class="space-y-2 text-sm">
+            <div class="flex justify-between">
+              <span class="text-muted-foreground">Provider</span>
+              <span class="font-mono">{config.data.llm.provider}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-muted-foreground">Chat model</span>
+              <span class="font-mono">{config.data.llm.chatModel ?? '—'}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-muted-foreground">Embedding model</span>
+              <span class="font-mono">{config.data.llm.embeddingModel ?? '—'}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-muted-foreground">Dimensions</span>
+              <span class="font-mono">{config.data.llm.embeddingDimensions}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-muted-foreground">API key</span>
+              <Badge variant={config.data.llm.configured ? 'default' : 'destructive'}>
+                {config.data.llm.configured ? 'configured' : 'not set'}
+              </Badge>
+            </div>
+            {config.data.llm.baseUrl && (
+              <div class="flex justify-between">
+                <span class="text-muted-foreground">Base URL</span>
+                <span class="font-mono text-xs">{config.data.llm.baseUrl}</span>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </>
+    )}
+  </div>
+</Base>

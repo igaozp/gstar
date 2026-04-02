@@ -4,21 +4,36 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
+### Backend (root)
+
 ```bash
-npm run dev          # Start dev server (hot reload) on http://localhost:3000
+npm run dev          # Start Nitro dev server (hot reload) on http://localhost:3000
 npm run build        # Production build → .output/
 npm run start        # Run production build
 
 npm run db:generate  # Generate Drizzle migration files from schema changes
 npm run db:push      # Push schema directly to DB (no migration file, dev only)
 npm run db:studio    # Open Drizzle Studio browser UI
+
+npm run app:dev      # Shortcut: start Astro frontend (runs npm --prefix app run dev)
+npm run app:build    # Shortcut: build Astro frontend
+```
+
+### Frontend (app/)
+
+```bash
+cd app
+npm run dev          # Start Astro dev server on http://localhost:4321
+npm run build        # Production build
 ```
 
 There are no tests. No linter is configured.
 
 ## Architecture
 
-This is a **Nitro server** (`srcDir: 'server'`) that manages GitHub starred repositories. Everything lives under `server/`.
+This repo has two components:
+- **Backend** — a Nitro server (`srcDir: 'server'`) that manages GitHub starred repositories. Everything lives under `server/`.
+- **Frontend** — an Astro SSR app under `app/` that consumes the backend REST API.
 
 ### Data flow
 
@@ -45,6 +60,17 @@ The `sync_state` table tracks `last_starred_at` (ISO8601 timestamp). Incremental
 ### Embedding dimensions
 
 The `vec_stars` virtual table is created with dimensions from `LLM_EMBEDDING_DIMENSIONS` (default 1536). Changing the embedding model to one with different dimensions requires dropping and recreating the `vec_stars` table and re-running `analyze:pending` for all repos.
+
+## Frontend Architecture (app/)
+
+The frontend is an **Astro SSR app** (`output: 'server'`) with React islands and shadcn/ui components.
+
+- **Pages:** `src/pages/index.astro` (search), `src/pages/stars/index.astro` (browse), `src/pages/stars/[id].astro` (detail), `src/pages/settings.astro`
+- **API client:** `src/lib/api.ts` — dual-context: uses `NITRO_BASE_URL` env var on the SSR server, relative `/api/*` path in the browser (proxied by Vite to `:3000` in dev)
+- **Islands:** `SearchPage.tsx` (search form + results), `StarFilters.tsx` (language/analyzed dropdowns), `Pagination.tsx`, `SyncButton.tsx`
+- **Shared types:** `src/lib/types.ts` mirrors the Nitro response shapes
+
+In dev, the Vite proxy (`astro.config.mjs`) forwards all `/api/*` browser requests to `http://localhost:3000`. Copy `app/.env.example` to `app/.env` for the SSR server-side `NITRO_BASE_URL`.
 
 ## Configuration
 

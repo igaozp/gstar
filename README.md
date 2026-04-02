@@ -7,24 +7,34 @@
 - **同步**：全量或增量拉取 GitHub star 数据（支持 ETag 缓存，增量同步按时间游标提前截断）
 - **分析**：调用 LLM 为每个 star 项目生成摘要和关键词，并生成 embedding 向量
 - **搜索**：支持三种策略——FTS5 关键词搜索、sqlite-vec 向量语义搜索、两者加权融合的 hybrid 搜索
+- **前端**：Astro + shadcn/ui 界面，支持可视化搜索、浏览列表、项目详情、同步管理
 
 ## 快速开始
 
 **环境要求：** Node.js 18+
 
 ```bash
-# 1. 安装依赖
+# 1. 安装后端依赖
 npm install
 
-# 2. 配置环境变量
+# 2. 配置后端环境变量
 cp .env.example .env
 # 编辑 .env，填入 GITHUB_TOKEN 和 LLM 相关配置
 
-# 3. 启动开发服务器
-npm run dev
+# 3. 安装前端依赖
+cd app && npm install && cd ..
+
+# 4. 配置前端环境变量
+cp app/.env.example app/.env
+
+# 5. 启动后端（终端1）
+npm run dev          # http://localhost:3000
+
+# 6. 启动前端（终端2）
+npm run app:dev      # http://localhost:4321
 ```
 
-服务默认运行在 `http://localhost:3000`。
+访问 `http://localhost:4321` 使用 Web 界面，或直接调用 `http://localhost:3000` 的 REST API。
 
 ## 配置
 
@@ -154,8 +164,14 @@ node .output/server/index.mjs   # 启动生产服务
 
 ## 技术栈
 
+**后端**
 - [Nitro](https://nitro.build) — 服务框架
 - [better-sqlite3](https://github.com/WiseLibs/better-sqlite3) + [sqlite-vec](https://github.com/asg017/sqlite-vec) — 本地数据库 + 向量搜索
 - [Drizzle ORM](https://orm.drizzle.team) — 数据库 Schema 管理
 - [ofetch](https://github.com/unjs/ofetch) — HTTP 客户端（GitHub API / LLM API）
 - [Zod](https://zod.dev) — 运行时参数校验
+
+**前端**
+- [Astro](https://astro.build) — SSR 框架（island 架构）
+- [shadcn/ui](https://ui.shadcn.com) + [Tailwind CSS](https://tailwindcss.com) — UI 组件与样式
+- [React](https://react.dev) — 交互式 island 组件
