@@ -1,11 +1,12 @@
 {
+  "extends": "./.nitro/types/tsconfig.json",
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "strict": true,
     "skipLibCheck": true,
-    "noEmit": true
+    "noEmit": true,
   },
-  "include": ["server/**/*", "nitro.config.ts", "drizzle.config.ts"]
+  "include": ["server/**/*", "nitro.config.ts", "drizzle.config.ts"],
 }

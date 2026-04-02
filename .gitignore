@@ -1,6 +1,7 @@
 node_modules/
 .output/
 .nitro/
+!.nitro/types/
 .cache/
 data/
 .env
