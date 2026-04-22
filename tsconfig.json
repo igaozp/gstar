@@ -8,5 +8,10 @@
     "skipLibCheck": true,
     "noEmit": true,
   },
-  "include": ["server/**/*", "nitro.config.ts", "drizzle.config.ts"],
+  "include": [
+    ".nitro/types/nitro.d.ts",
+    "server/**/*",
+    "nitro.config.ts",
+    "drizzle.config.ts"
+  ],
 }

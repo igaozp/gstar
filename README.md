@@ -115,6 +115,9 @@ curl -X POST http://localhost:3000/api/search \
 ### 列表与详情
 
 ```bash
+# API 入口
+GET /api
+
 # 获取 star 列表（支持分页和筛选）
 GET /api/stars?page=1&limit=20&language=TypeScript&analyzed=true
 

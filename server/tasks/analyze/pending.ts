@@ -2,7 +2,13 @@ import { buildAnalysisInput, buildEmbeddingText, parseAnalysisResponse, normaliz
 
 const BATCH_SIZE = 10
 
-export default defineTask({
+interface AnalyzePendingResult {
+  processed: number
+  reason?: string
+  total?: number
+}
+
+export default defineTask<AnalyzePendingResult>({
   meta: {
     name: 'analyze:pending',
     description: 'Analyze pending repos with LLM: generate summary, keywords, and embeddings',

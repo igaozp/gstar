@@ -1,5 +1,22 @@
 import { z } from 'zod'
 
+interface StarRow {
+  id: number
+  full_name: string
+  owner: string
+  name: string
+  description: string | null
+  language: string | null
+  topics: string | null
+  stargazers_count: number
+  forks_count: number
+  html_url: string
+  starred_at: string
+  analyzed_at: string | null
+  ai_summary: string | null
+  ai_keywords: string | null
+}
+
 const querySchema = z.object({
   page:     z.coerce.number().int().min(1).default(1),
   limit:    z.coerce.number().int().min(1).max(100).default(20),
@@ -45,7 +62,7 @@ export default defineEventHandler(async (event) => {
     FROM stars ${where}
     ORDER BY starred_at DESC
     LIMIT ? OFFSET ?
-  `).all(...params, limit, offset)
+  `).all(...params, limit, offset) as StarRow[]
 
   return {
     ok: true,
@@ -54,7 +71,7 @@ export default defineEventHandler(async (event) => {
   }
 })
 
-function formatStar(row: Record<string, unknown>) {
+function formatStar(row: StarRow) {
   return {
     ...row,
     topics: tryParseJson(row.topics as string | null, []),

@@ -1,7 +1,12 @@
 import { fetchAllStars } from '../../utils/github/client'
 import { upsertStars } from '../../utils/github/upsert'
 
-export default defineTask({
+interface IncrementalSyncResult {
+  synced: number
+  notModified?: boolean
+}
+
+export default defineTask<IncrementalSyncResult>({
   meta: {
     name: 'sync:incremental',
     description: 'Incremental sync of newly starred GitHub repositories',
