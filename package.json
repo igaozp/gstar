@@ -2,30 +2,24 @@
   "name": "gstar",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
+  "packageManager": "npm@11.8.0",
+  "workspaces": [
+    "apps/*"
+  ],
   "scripts": {
-    "postinstall": "nitro prepare",
-    "dev": "nitro dev",
-    "build": "nitro build",
-    "start": "node .output/server/index.mjs",
-    "app:dev": "npm --prefix app run dev",
-    "app:build": "npm --prefix app run build",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
-    "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio"
-  },
-  "dependencies": {
-    "nitropack": "^2.10.4",
-    "better-sqlite3": "^12.8.0",
-    "drizzle-orm": "^0.38.0",
-    "sqlite-vec": "^0.1.9",
-    "ofetch": "^1.4.1",
-    "zod": "^3.23.8"
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "start": "turbo run start",
+    "dev:web": "npm run dev --workspace=@gstar/web",
+    "dev:api": "npm run dev --workspace=@gstar/api",
+    "build:web": "npm run build --workspace=@gstar/web",
+    "build:api": "npm run build --workspace=@gstar/api",
+    "db:generate": "npm run db:generate --workspace=@gstar/api",
+    "db:migrate": "npm run db:migrate --workspace=@gstar/api",
+    "db:push": "npm run db:push --workspace=@gstar/api",
+    "db:studio": "npm run db:studio --workspace=@gstar/api"
   },
   "devDependencies": {
-    "@types/better-sqlite3": "^7.6.11",
-    "drizzle-kit": "^0.29.0",
-    "typescript": "^5.5.0"
+    "turbo": "^2.5.0"
   }
 }

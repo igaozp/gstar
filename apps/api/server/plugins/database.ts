@@ -2,14 +2,17 @@ import BetterSqlite3 from 'better-sqlite3'
 import { drizzle } from 'drizzle-orm/better-sqlite3'
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator'
 import { mkdirSync } from 'node:fs'
-import { dirname, resolve } from 'node:path'
+import { dirname, isAbsolute, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import * as sqliteVec from 'sqlite-vec'
 import * as schema from '../utils/db/schema'
 import { setDb } from '../utils/db/client'
 
 export default defineNitroPlugin(async () => {
   const config = useRuntimeConfig()
-  const dbPath = resolve(config.dbPath)
+  const repoRoot = fileURLToPath(new URL('../../../../', import.meta.url))
+  const migrationsFolder = fileURLToPath(new URL('../utils/db/migrations', import.meta.url))
+  const dbPath = isAbsolute(config.dbPath) ? config.dbPath : resolve(repoRoot, config.dbPath)
 
   // Ensure data directory exists
   mkdirSync(dirname(dbPath), { recursive: true })
@@ -29,7 +32,7 @@ export default defineNitroPlugin(async () => {
 
   // Run Drizzle migrations
   try {
-    migrate(db, { migrationsFolder: './server/utils/db/migrations' })
+    migrate(db, { migrationsFolder })
   } catch (e) {
     // Migrations folder may not exist yet on first run before drizzle-kit generate
     // In that case we rely on the manual table creation below

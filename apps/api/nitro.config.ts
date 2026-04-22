@@ -1,4 +1,13 @@
+import { resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { config as loadEnv } from 'dotenv'
 import { defineNitroConfig } from 'nitropack/config'
+
+const workspaceDir = fileURLToPath(new URL('./', import.meta.url))
+const repoRoot = fileURLToPath(new URL('../../', import.meta.url))
+
+loadEnv({ path: resolve(repoRoot, '.env'), quiet: true })
+loadEnv({ path: resolve(workspaceDir, '.env'), override: true, quiet: true })
 
 export default defineNitroConfig({
   srcDir: 'server',

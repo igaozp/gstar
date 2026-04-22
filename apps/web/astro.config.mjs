@@ -1,9 +1,13 @@
 import { defineConfig } from 'astro/config'
+import node from '@astrojs/node'
 import react from '@astrojs/react'
 import tailwind from '@astrojs/tailwind'
 
+const nitroBaseUrl = process.env.NITRO_BASE_URL ?? 'http://localhost:3000'
+
 export default defineConfig({
   output: 'server',
+  adapter: node({ mode: 'standalone' }),
   integrations: [
     react(),
     tailwind({ applyBaseStyles: false }),
@@ -15,7 +19,7 @@ export default defineConfig({
     server: {
       proxy: {
         '/api': {
-          target: 'http://localhost:3000',
+          target: nitroBaseUrl,
           changeOrigin: true,
         },
       },

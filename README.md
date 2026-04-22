@@ -14,25 +14,24 @@
 **环境要求：** Node.js 18+
 
 ```bash
-# 1. 安装后端依赖
+# 1. 安装 monorepo 依赖
 npm install
 
-# 2. 配置后端环境变量
+# 2. 配置后端环境变量（仓库根目录）
 cp .env.example .env
 # 编辑 .env，填入 GITHUB_TOKEN 和 LLM 相关配置
 
-# 3. 安装前端依赖
-cd app && npm install && cd ..
+# 3. 配置前端环境变量
+cp apps/web/.env.example apps/web/.env
 
-# 4. 配置前端环境变量
-cp app/.env.example app/.env
-
-# 5. 启动后端（终端1）
-npm run dev          # http://localhost:3000
-
-# 6. 启动前端（终端2）
-npm run app:dev      # http://localhost:4321
+# 4. 一次启动前后端
+npm run dev
 ```
+
+开发模式下：
+
+- 前端 `apps/web` 运行在 `http://localhost:4321`
+- 后端 `apps/api` 运行在 `http://localhost:3000`
 
 访问 `http://localhost:4321` 使用 Web 界面，或直接调用 `http://localhost:3000` 的 REST API。
 
@@ -156,14 +155,27 @@ POST /api/search {"query": "..."}      ← 语义搜索
 
 增量同步每小时自动运行，也可手动触发。
 
+## Monorepo 脚本
+
+```bash
+npm run dev         # Turbo 并行启动前后端
+npm run build       # Turbo 并行构建前后端
+npm run start       # 启动构建后的前后端
+npm run dev:web     # 只启动前端
+npm run dev:api     # 只启动后端
+npm run db:generate # 透传到 apps/api
+```
+
 ## 构建与部署
 
 ```bash
-npm run build          # 编译到 .output/
-node .output/server/index.mjs   # 启动生产服务
+npm run build
+npm run start
 ```
 
-数据库文件位于 `./data/gstar.db`（gitignore 中），请自行备份。
+后端构建产物位于 `apps/api/.output/`，前端构建产物位于 `apps/web/dist/`。
+
+数据库文件默认位于 `./data/gstar.db`（gitignore 中），请自行备份。
 
 ## 技术栈
 
