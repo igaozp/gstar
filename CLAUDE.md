@@ -4,27 +4,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
-### Backend (root)
+### Monorepo (root)
 
 ```bash
-npm run dev          # Start Nitro dev server (hot reload) on http://localhost:3000
-npm run build        # Production build → .output/
-npm run start        # Run production build
+bun run dev          # Start frontend and backend through Turbo
+bun run build        # Build frontend and backend through Turbo
+bun run start        # Run production builds through Turbo
 
-npm run db:generate  # Generate Drizzle migration files from schema changes
-npm run db:push      # Push schema directly to DB (no migration file, dev only)
-npm run db:studio    # Open Drizzle Studio browser UI
+bun run db:generate  # Generate Drizzle migration files from schema changes
+bun run db:push      # Push schema directly to DB (no migration file, dev only)
+bun run db:studio    # Open Drizzle Studio browser UI
 
-npm run app:dev      # Shortcut: start Astro frontend (runs npm --prefix app run dev)
-npm run app:build    # Shortcut: build Astro frontend
+bun run dev:web      # Start Astro dev server on http://localhost:4321
+bun run dev:api      # Start Nitro dev server on http://localhost:3000
 ```
 
-### Frontend (app/)
+### Workspace commands
 
 ```bash
-cd app
-npm run dev          # Start Astro dev server on http://localhost:4321
-npm run build        # Production build
+cd apps/web
+bun run dev          # Start Astro dev server on http://localhost:4321
+bun run build        # Production build
 ```
 
 There are no tests. No linter is configured.
@@ -32,8 +32,8 @@ There are no tests. No linter is configured.
 ## Architecture
 
 This repo has two components:
-- **Backend** — a Nitro server (`srcDir: 'server'`) that manages GitHub starred repositories. Everything lives under `server/`.
-- **Frontend** — an Astro SSR app under `app/` that consumes the backend REST API.
+- **Backend** — a Nitro server (`srcDir: 'server'`) under `apps/api` that manages GitHub starred repositories.
+- **Frontend** — an Astro SSR app under `apps/web` that consumes the backend REST API.
 
 ### Data flow
 
@@ -61,7 +61,7 @@ The `sync_state` table tracks `last_starred_at` (ISO8601 timestamp). Incremental
 
 The `vec_stars` virtual table is created with dimensions from `LLM_EMBEDDING_DIMENSIONS` (default 1536). Changing the embedding model to one with different dimensions requires dropping and recreating the `vec_stars` table and re-running `analyze:pending` for all repos.
 
-## Frontend Architecture (app/)
+## Frontend Architecture (apps/web/)
 
 The frontend is an **Astro SSR app** (`output: 'server'`) with React islands and shadcn/ui components.
 
@@ -70,7 +70,7 @@ The frontend is an **Astro SSR app** (`output: 'server'`) with React islands and
 - **Islands:** `SearchPage.tsx` (search form + results), `StarFilters.tsx` (language/analyzed dropdowns), `Pagination.tsx`, `SyncButton.tsx`
 - **Shared types:** `src/lib/types.ts` mirrors the Nitro response shapes
 
-In dev, the Vite proxy (`astro.config.mjs`) forwards all `/api/*` browser requests to `http://localhost:3000`. Copy `app/.env.example` to `app/.env` for the SSR server-side `NITRO_BASE_URL`.
+In dev, the Vite proxy (`astro.config.mjs`) forwards all `/api/*` browser requests to `http://localhost:3000`. Copy `apps/web/.env.example` to `apps/web/.env` for the SSR server-side `NITRO_BASE_URL`.
 
 ## Configuration
 

@@ -2,7 +2,7 @@
   "name": "gstar",
   "version": "0.1.0",
   "private": true,
-  "packageManager": "npm@11.8.0",
+  "packageManager": "bun@1.3.12",
   "workspaces": [
     "apps/*"
   ],
@@ -10,14 +10,14 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "start": "turbo run start",
-    "dev:web": "npm run dev --workspace=@gstar/web",
-    "dev:api": "npm run dev --workspace=@gstar/api",
-    "build:web": "npm run build --workspace=@gstar/web",
-    "build:api": "npm run build --workspace=@gstar/api",
-    "db:generate": "npm run db:generate --workspace=@gstar/api",
-    "db:migrate": "npm run db:migrate --workspace=@gstar/api",
-    "db:push": "npm run db:push --workspace=@gstar/api",
-    "db:studio": "npm run db:studio --workspace=@gstar/api"
+    "dev:web": "bun --cwd apps/web run dev",
+    "dev:api": "bun --cwd apps/api run dev",
+    "build:web": "bun --cwd apps/web run build",
+    "build:api": "bun --cwd apps/api run build",
+    "db:generate": "bun --cwd apps/api run db:generate",
+    "db:migrate": "bun --cwd apps/api run db:migrate",
+    "db:push": "bun --cwd apps/api run db:push",
+    "db:studio": "bun --cwd apps/api run db:studio"
   },
   "devDependencies": {
     "turbo": "^2.5.0"

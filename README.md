@@ -11,11 +11,11 @@
 
 ## 快速开始
 
-**环境要求：** Node.js 18+
+**环境要求：** Bun 1.3+、Node.js 18+
 
 ```bash
 # 1. 安装 monorepo 依赖
-npm install
+bun install
 
 # 2. 配置后端环境变量（仓库根目录）
 cp .env.example .env
@@ -25,7 +25,7 @@ cp .env.example .env
 cp apps/web/.env.example apps/web/.env
 
 # 4. 一次启动前后端
-npm run dev
+bun run dev
 ```
 
 开发模式下：
@@ -158,19 +158,19 @@ POST /api/search {"query": "..."}      ← 语义搜索
 ## Monorepo 脚本
 
 ```bash
-npm run dev         # Turbo 并行启动前后端
-npm run build       # Turbo 并行构建前后端
-npm run start       # 启动构建后的前后端
-npm run dev:web     # 只启动前端
-npm run dev:api     # 只启动后端
-npm run db:generate # 透传到 apps/api
+bun run dev         # Turbo 并行启动前后端
+bun run build       # Turbo 并行构建前后端
+bun run start       # 启动构建后的前后端
+bun run dev:web     # 只启动前端
+bun run dev:api     # 只启动后端
+bun run db:generate # 透传到 apps/api
 ```
 
 ## 构建与部署
 
 ```bash
-npm run build
-npm run start
+bun run build
+bun run start
 ```
 
 后端构建产物位于 `apps/api/.output/`，前端构建产物位于 `apps/web/dist/`。
