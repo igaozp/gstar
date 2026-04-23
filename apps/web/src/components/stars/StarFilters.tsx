@@ -56,9 +56,9 @@ export function StarFilters({ languages }: Props) {
   const hasFilters = language || analyzed
 
   return (
-    <div className="flex items-center gap-3 flex-wrap">
+    <div className="flex flex-wrap items-center gap-3 border border-border bg-card p-3 shadow-sm">
       <Select value={language || '__all__'} onValueChange={handleLanguage}>
-        <SelectTrigger className="w-[160px]">
+        <SelectTrigger className="h-10 w-[180px]">
           <SelectValue placeholder="Language" />
         </SelectTrigger>
         <SelectContent>
@@ -70,7 +70,7 @@ export function StarFilters({ languages }: Props) {
       </Select>
 
       <Select value={analyzed || '__all__'} onValueChange={handleAnalyzed}>
-        <SelectTrigger className="w-[160px]">
+        <SelectTrigger className="h-10 w-[170px]">
           <SelectValue placeholder="Analysis" />
         </SelectTrigger>
         <SelectContent>
@@ -82,7 +82,7 @@ export function StarFilters({ languages }: Props) {
 
       {hasFilters && (
         <Button variant="ghost" size="sm" onClick={handleReset}>
-          Clear filters
+          Clear
         </Button>
       )}
     </div>

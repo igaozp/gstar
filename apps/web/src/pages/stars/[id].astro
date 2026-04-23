@@ -22,92 +22,95 @@ function fmt(iso: string) {
 ---
 
 <Base title={star.fullName}>
-  <div class="max-w-3xl mx-auto space-y-6">
-    <div>
-      <div class="flex items-center gap-3 flex-wrap">
-        <h1 class="text-2xl font-bold">{star.fullName}</h1>
+  <div class="mx-auto max-w-6xl space-y-8">
+    <section class="border border-border bg-card/80 p-6 shadow-sm lg:p-10">
+      <div class="flex flex-wrap items-center gap-3">
+        <Badge variant="secondary">{star.language ?? 'Unknown'}</Badge>
         {star.isArchived && <Badge variant="outline">archived</Badge>}
         {star.isFork && <Badge variant="outline">fork</Badge>}
       </div>
+      <h1 class="mt-5 max-w-4xl font-heading text-5xl font-semibold leading-none tracking-tight sm:text-6xl">
+        {star.fullName}
+      </h1>
       {star.description && (
-        <p class="text-muted-foreground mt-2">{star.description}</p>
+        <p class="mt-5 max-w-3xl text-base leading-8 text-muted-foreground">{star.description}</p>
       )}
-      <div class="flex items-center gap-4 mt-3 flex-wrap">
+      <div class="mt-8 flex flex-wrap items-center gap-4">
         <a
           href={star.htmlUrl}
           target="_blank"
           rel="noopener noreferrer"
-          class="text-sm text-blue-600 hover:underline inline-flex items-center gap-1"
+          class="inline-flex border border-border bg-foreground px-5 py-3 text-xs font-semibold uppercase tracking-[0.22em] text-background transition-opacity hover:opacity-80"
         >
-          View on GitHub →
+          View on GitHub
         </a>
         {star.homepage && (
           <a
             href={star.homepage}
             target="_blank"
             rel="noopener noreferrer"
-            class="text-sm text-blue-600 hover:underline"
+            class="inline-flex border border-border bg-background px-5 py-3 text-xs font-semibold uppercase tracking-[0.22em] text-foreground transition-colors hover:bg-muted"
           >
-            Homepage →
+            Homepage
           </a>
         )}
       </div>
-    </div>
+    </section>
 
-    <Separator />
-
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
-      <div>
-        <div class="text-muted-foreground text-xs uppercase tracking-wide mb-1">Stars</div>
-        <div class="font-semibold">{star.stargazersCount.toLocaleString()}</div>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="border border-border bg-card p-5 shadow-sm">
+        <div class="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">Stars</div>
+        <div class="mt-3 font-heading text-4xl font-semibold">{star.stargazersCount.toLocaleString()}</div>
       </div>
-      <div>
-        <div class="text-muted-foreground text-xs uppercase tracking-wide mb-1">Forks</div>
-        <div class="font-semibold">{star.forksCount.toLocaleString()}</div>
+      <div class="border border-border bg-card p-5 shadow-sm">
+        <div class="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">Forks</div>
+        <div class="mt-3 font-heading text-4xl font-semibold">{star.forksCount.toLocaleString()}</div>
       </div>
-      <div>
-        <div class="text-muted-foreground text-xs uppercase tracking-wide mb-1">Language</div>
-        <div class="font-semibold">{star.language ?? '—'}</div>
+      <div class="border border-border bg-card p-5 shadow-sm">
+        <div class="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">Language</div>
+        <div class="mt-3 font-heading text-4xl font-semibold">{star.language ?? '—'}</div>
       </div>
-      <div>
-        <div class="text-muted-foreground text-xs uppercase tracking-wide mb-1">Starred</div>
-        <div class="font-semibold">{fmt(star.starredAt)}</div>
+      <div class="border border-border bg-card p-5 shadow-sm">
+        <div class="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">Starred</div>
+        <div class="mt-3 font-heading text-3xl font-semibold">{fmt(star.starredAt)}</div>
       </div>
     </div>
 
     {star.topics && star.topics.length > 0 && (
-      <div>
-        <h2 class="text-sm font-semibold mb-2 text-muted-foreground uppercase tracking-wide">Topics</h2>
-        <div class="flex flex-wrap gap-2">
+      <section class="border border-border bg-card p-6 shadow-sm">
+        <h2 class="mb-4 text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">Topics</h2>
+        <div class="flex flex-wrap gap-3">
           {star.topics.map((t: string) => (
             <Badge variant="secondary">{t}</Badge>
           ))}
         </div>
-      </div>
+      </section>
     )}
 
-    <Separator />
-
     {star.aiSummary ? (
-      <div>
-        <h2 class="text-sm font-semibold mb-2 text-muted-foreground uppercase tracking-wide">AI Summary</h2>
-        <p class="text-sm leading-relaxed">{star.aiSummary}</p>
+      <section class="border border-border bg-card p-6 shadow-sm lg:p-8">
+        <div class="mb-5 flex items-center justify-between gap-4">
+          <h2 class="font-heading text-3xl font-semibold">AI Summary</h2>
+          <Separator className="hidden flex-1 lg:block" />
+        </div>
+        <p class="max-w-4xl text-base leading-8 text-muted-foreground">{star.aiSummary}</p>
         {star.aiKeywords && star.aiKeywords.length > 0 && (
-          <div class="flex flex-wrap gap-1.5 mt-3">
+          <div class="mt-6 flex flex-wrap gap-3">
             {star.aiKeywords.map((kw: string) => (
-              <Badge variant="outline" class="text-xs">{kw}</Badge>
+              <Badge variant="outline">{kw}</Badge>
             ))}
           </div>
         )}
-        <div class="text-xs text-muted-foreground mt-3 flex gap-4 flex-wrap">
+        <div class="mt-6 flex flex-wrap gap-4 border-t border-border pt-5 text-xs text-muted-foreground">
           {star.analysisModel && <span>Model: {star.analysisModel}</span>}
           {star.analyzedAt && <span>Analyzed: {fmt(star.analyzedAt)}</span>}
           {star.embeddingModel && <span>Embedding: {star.embeddingModel} ({star.dimensions}d)</span>}
         </div>
-      </div>
+      </section>
     ) : (
-      <div class="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
-        This repository has not been analyzed yet. Run the analyzer to generate an AI summary.
+      <div class="border border-dashed border-border bg-card/70 p-10 text-center">
+        <h2 class="font-heading text-2xl font-semibold">Analysis pending</h2>
+        <p class="mt-2 text-sm text-muted-foreground">This repository has not been analyzed yet. Run the analyzer to generate an AI summary.</p>
       </div>
     )}
   </div>

@@ -3,7 +3,6 @@ import Base from '@/layouts/Base.astro'
 import { StarCard } from '@/components/stars/StarCard'
 import { StarFilters } from '@/components/stars/StarFilters'
 import { Pagination } from '@/components/stars/Pagination'
-import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/lib/api'
 
 const url = Astro.url
@@ -32,23 +31,25 @@ const { data: stars, meta } = result
 ---
 
 <Base title="Stars">
-  <div class="space-y-6">
-    <div class="flex items-center justify-between flex-wrap gap-4">
-      <div>
-        <h1 class="text-2xl font-bold">Starred Repositories</h1>
-        <p class="text-muted-foreground text-sm mt-1">
-          {meta.total.toLocaleString()} total
+  <div class="space-y-8">
+    <section class="grid gap-6 border border-border bg-card/80 p-6 shadow-sm lg:grid-cols-[1fr_auto] lg:items-end lg:p-10">
+      <div class="space-y-3">
+        <p class="text-[0.65rem] font-semibold uppercase tracking-[0.28em] text-muted-foreground">Repository archive</p>
+        <h1 class="font-heading text-5xl font-semibold leading-none tracking-tight sm:text-6xl">Starred repositories</h1>
+        <p class="max-w-2xl text-sm leading-7 text-muted-foreground">
+          Browse the synchronized GitHub star catalog, filter by language, and jump into generated analysis.
         </p>
       </div>
       <StarFilters client:load languages={allLanguages} />
-    </div>
+    </section>
 
     {stars.length === 0 ? (
-      <div class="rounded-lg border border-dashed p-12 text-center text-muted-foreground">
-        No repositories found. Try adjusting your filters or sync your stars first.
+      <div class="border border-dashed border-border bg-card/70 p-14 text-center">
+        <h2 class="font-heading text-3xl font-semibold">No repositories found</h2>
+        <p class="mt-2 text-sm text-muted-foreground">Try adjusting your filters or sync your stars first.</p>
       </div>
     ) : (
-      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
         {stars.map((star) => (
           <StarCard star={star} href={`/stars/${star.id}`} />
         ))}

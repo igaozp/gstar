@@ -21,11 +21,11 @@ export function Pagination({ page, pages, total }: Props) {
   const pageNumbers = Array.from({ length: end - start + 1 }, (_, i) => start + i)
 
   return (
-    <div className="flex items-center justify-between mt-6">
-      <p className="text-sm text-muted-foreground">
-        {total.toLocaleString()} repositories
+    <div className="mt-8 flex flex-col gap-4 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
+      <p className="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+        {total.toLocaleString()} repositories indexed
       </p>
-      <div className="flex items-center gap-1">
+      <div className="flex flex-wrap items-center gap-1">
         <Button
           variant="outline"
           size="icon"
@@ -37,7 +37,7 @@ export function Pagination({ page, pages, total }: Props) {
         {start > 1 && (
           <>
             <Button variant="outline" size="sm" onClick={() => goTo(1)}>1</Button>
-            {start > 2 && <span className="px-1 text-muted-foreground text-sm">…</span>}
+            {start > 2 && <span className="px-2 text-sm text-muted-foreground">…</span>}
           </>
         )}
         {pageNumbers.map((p) => (
@@ -52,7 +52,7 @@ export function Pagination({ page, pages, total }: Props) {
         ))}
         {end < pages && (
           <>
-            {end < pages - 1 && <span className="px-1 text-muted-foreground text-sm">…</span>}
+            {end < pages - 1 && <span className="px-2 text-sm text-muted-foreground">…</span>}
             <Button variant="outline" size="sm" onClick={() => goTo(pages)}>{pages}</Button>
           </>
         )}

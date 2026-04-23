@@ -26,25 +26,25 @@ export function SyncButton() {
   }
 
   return (
-    <div className="space-y-3">
-      <div className="flex gap-3 flex-wrap">
+    <div className="space-y-4">
+      <div className="grid gap-3 sm:grid-cols-2">
         <Button
           variant="outline"
-          size="sm"
+          className="h-12 justify-between"
           disabled={loading !== null}
           onClick={() => handleSync('incremental')}
         >
-          <RefreshCw className={loading === 'incremental' ? 'animate-spin' : ''} />
           Incremental Sync
+          <RefreshCw className={loading === 'incremental' ? 'animate-spin' : ''} />
         </Button>
         <Button
-          variant="outline"
-          size="sm"
+          variant="default"
+          className="h-12 justify-between"
           disabled={loading !== null}
           onClick={() => handleSync('full')}
         >
-          <RefreshCw className={loading === 'full' ? 'animate-spin' : ''} />
           Full Sync
+          <RefreshCw className={loading === 'full' ? 'animate-spin' : ''} />
         </Button>
       </div>
 

@@ -1,5 +1,5 @@
-import { Star, GitFork, ExternalLink, Cpu } from 'lucide-react'
-import { Card, CardHeader, CardContent } from '@/components/ui/card'
+import { ArrowUpRight, Cpu, ExternalLink, GitFork, Star } from 'lucide-react'
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import type { Star as StarType } from '@/lib/types'
@@ -28,99 +28,79 @@ const LANGUAGE_COLORS: Record<string, string> = {
   Vue: 'bg-emerald-500',
 }
 
-function CardBody({ star, score }: { star: StarType; score?: number }) {
+function CardBody({ star, score, href }: Props) {
   return (
-    <Card className="h-full transition-shadow hover:shadow-md">
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between gap-2">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <a
-                href={star.htmlUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="font-semibold text-sm hover:underline text-foreground inline-flex items-center gap-1"
-              >
-                {star.fullName}
-                <ExternalLink className="h-3 w-3 opacity-50" />
-              </a>
-              {star.isArchived && (
-                <Badge variant="outline" className="text-xs">archived</Badge>
-              )}
+    <Card className="h-full border border-border bg-card/90 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+      <CardHeader>
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0 space-y-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="truncate font-heading text-xl font-semibold tracking-wide">{star.fullName}</p>
+              {star.isArchived && <Badge variant="outline">archived</Badge>}
             </div>
             {star.description && (
-              <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                {star.description}
-              </p>
+              <p className="line-clamp-2 text-sm leading-6 text-muted-foreground">{star.description}</p>
             )}
           </div>
           {score !== undefined && (
-            <Badge variant="secondary" className="shrink-0 font-mono text-xs">
+            <span className="shrink-0 border border-border bg-background px-2 py-1 font-mono text-xs text-muted-foreground">
               {(score * 100).toFixed(0)}%
-            </Badge>
+            </span>
           )}
         </div>
       </CardHeader>
-      <CardContent className="pt-0">
+      <CardContent className="space-y-5">
         {star.aiSummary && (
-          <p className="text-sm text-muted-foreground mb-3 line-clamp-2 border-l-2 border-muted pl-3 italic">
+          <p className="line-clamp-3 border-l border-foreground/20 pl-4 text-sm leading-6 text-muted-foreground">
             {star.aiSummary}
           </p>
         )}
 
-        <div className="flex flex-wrap gap-1 mb-3">
+        <div className="flex flex-wrap gap-x-3 gap-y-2">
           {star.aiKeywords?.slice(0, 5).map((kw) => (
-            <Badge key={kw} variant="outline" className="text-xs px-1.5 py-0">
+            <Badge key={kw} variant="outline">
               {kw}
             </Badge>
           ))}
           {star.topics?.slice(0, 3).map((topic) => (
-            <Badge key={topic} variant="secondary" className="text-xs px-1.5 py-0">
+            <Badge key={topic} variant="secondary">
               {topic}
             </Badge>
           ))}
         </div>
-
-        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+      </CardContent>
+      <CardFooter className="mt-auto flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5">
+        <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
           {star.language && (
-            <span className="flex items-center gap-1">
-              <span
-                className={cn(
-                  'h-2.5 w-2.5 rounded-full',
-                  LANGUAGE_COLORS[star.language] ?? 'bg-gray-400'
-                )}
-              />
+            <span className="flex items-center gap-2">
+              <span className={cn('size-2.5', LANGUAGE_COLORS[star.language] ?? 'bg-gray-400')} />
               {star.language}
             </span>
           )}
-          <span className="flex items-center gap-1">
-            <Star className="h-3 w-3" />
-            {star.stargazersCount.toLocaleString()}
-          </span>
-          <span className="flex items-center gap-1">
-            <GitFork className="h-3 w-3" />
-            {star.forksCount.toLocaleString()}
-          </span>
-          {star.analyzedAt && (
-            <span className="flex items-center gap-1 ml-auto">
-              <Cpu className="h-3 w-3 text-green-500" />
-              <span className="text-green-600 dark:text-green-400">analyzed</span>
-            </span>
-          )}
+          <span className="flex items-center gap-1.5"><Star className="size-3.5" />{star.stargazersCount.toLocaleString()}</span>
+          <span className="flex items-center gap-1.5"><GitFork className="size-3.5" />{star.forksCount.toLocaleString()}</span>
+          {star.analyzedAt && <span className="flex items-center gap-1.5"><Cpu className="size-3.5" />analyzed</span>}
         </div>
-      </CardContent>
+        <div className="flex items-center gap-3">
+          {href && (
+            <a href={href} className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-foreground hover:text-muted-foreground">
+              Details <ArrowUpRight className="size-3.5" />
+            </a>
+          )}
+          <a
+            href={star.htmlUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground"
+          >
+            GitHub <ExternalLink className="size-3.5" />
+          </a>
+        </div>
+      </CardFooter>
     </Card>
   )
 }
 
 export function StarCard({ star, score, href }: Props) {
-  if (href) {
-    return (
-      <a href={href} className="block cursor-pointer">
-        <CardBody star={star} score={score} />
-      </a>
-    )
-  }
-  return <CardBody star={star} score={score} />
+  return <CardBody star={star} score={score} href={href} />
 }
