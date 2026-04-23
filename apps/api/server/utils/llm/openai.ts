@@ -6,6 +6,8 @@ export class OpenAIClient implements LLMClient {
   private embedBase: string
   private chatApiKey: string
   private embedApiKey: string
+  private temperature: number
+  private maxTokens: number
   readonly chatModel: string
   readonly embeddingModel: string
 
@@ -17,12 +19,16 @@ export class OpenAIClient implements LLMClient {
     // For Anthropic: a separate embedding endpoint
     embeddingApiKey?: string
     embeddingBaseUrl?: string
+    temperature?: number
+    maxTokens?: number
   }) {
     const base = opts.baseUrl?.replace(/\/$/, '') || 'https://api.openai.com/v1'
     this.chatBase = base
     this.embedBase = (opts.embeddingBaseUrl?.replace(/\/$/, '') || base)
     this.chatApiKey = opts.apiKey
     this.embedApiKey = opts.embeddingApiKey || opts.apiKey
+    this.temperature = opts.temperature ?? 0.3
+    this.maxTokens = opts.maxTokens ?? 1024
     this.chatModel = opts.chatModel
     this.embeddingModel = opts.embeddingModel
   }
@@ -39,8 +45,8 @@ export class OpenAIClient implements LLMClient {
         body: {
           model: this.chatModel,
           messages,
-          temperature: opts?.temperature ?? 0.3,
-          max_tokens: opts?.maxTokens ?? 1024,
+          temperature: opts?.temperature ?? this.temperature,
+          max_tokens: opts?.maxTokens ?? this.maxTokens,
         },
       }
     )

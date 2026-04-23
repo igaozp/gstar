@@ -10,6 +10,8 @@ export class AnthropicClient implements LLMClient {
   private base: string
   private apiKey: string
   private chatModel: string
+  private temperature: number
+  private maxTokens: number
   private embeddingDelegate: OpenAIClient
 
   constructor(opts: {
@@ -19,15 +21,21 @@ export class AnthropicClient implements LLMClient {
     embeddingApiKey: string
     embeddingBaseUrl: string
     embeddingModel: string
+    temperature?: number
+    maxTokens?: number
   }) {
     this.base = opts.baseUrl?.replace(/\/$/, '') || 'https://api.anthropic.com'
     this.apiKey = opts.apiKey
     this.chatModel = opts.chatModel
+    this.temperature = opts.temperature ?? 0.3
+    this.maxTokens = opts.maxTokens ?? 1024
     this.embeddingDelegate = new OpenAIClient({
       apiKey: opts.embeddingApiKey,
       baseUrl: opts.embeddingBaseUrl,
       chatModel: '',
       embeddingModel: opts.embeddingModel,
+      temperature: opts.temperature,
+      maxTokens: opts.maxTokens,
     })
   }
 
@@ -38,7 +46,8 @@ export class AnthropicClient implements LLMClient {
 
     const body: Record<string, unknown> = {
       model: this.chatModel,
-      max_tokens: opts?.maxTokens ?? 1024,
+      max_tokens: opts?.maxTokens ?? this.maxTokens,
+      temperature: opts?.temperature ?? this.temperature,
       messages: userMessages.map(m => ({ role: m.role, content: m.content })),
     }
     if (systemMsg) body.system = systemMsg.content

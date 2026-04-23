@@ -7,7 +7,7 @@ let _client: LLMClient | null = null
 export function getLLMClient(): LLMClient {
   if (_client) return _client
 
-  const config = useRuntimeConfig()
+  const config = getEffectiveAppConfig()
   const provider = config.llmProvider || 'openai'
 
   if (provider === 'anthropic') {
@@ -24,6 +24,8 @@ export function getLLMClient(): LLMClient {
       embeddingApiKey: config.llmEmbeddingApiKey,
       embeddingBaseUrl: config.llmEmbeddingBaseUrl,
       embeddingModel: config.llmEmbeddingModel,
+      temperature: config.llmTemperature,
+      maxTokens: config.llmMaxTokens,
     })
   } else {
     // 'openai' or 'openai_compatible'
@@ -32,6 +34,10 @@ export function getLLMClient(): LLMClient {
       baseUrl: config.llmBaseUrl || undefined,
       chatModel: config.llmChatModel,
       embeddingModel: config.llmEmbeddingModel,
+      embeddingApiKey: config.llmEmbeddingApiKey || undefined,
+      embeddingBaseUrl: config.llmEmbeddingBaseUrl || undefined,
+      temperature: config.llmTemperature,
+      maxTokens: config.llmMaxTokens,
     })
   }
 

@@ -7,7 +7,7 @@ export default defineTask({
     description: 'Full sync of all GitHub starred repositories',
   },
   async run() {
-    const config = useRuntimeConfig()
+    const config = getEffectiveAppConfig()
 
     if (!config.githubToken || !config.githubUsername) {
       throw new Error('GITHUB_TOKEN and GITHUB_USERNAME must be configured')

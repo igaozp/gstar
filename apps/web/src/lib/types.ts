@@ -81,8 +81,13 @@ export interface ConfigData {
       provider: string
       baseUrl: string | null
       chatModel: string | null
+      temperature: number
+      maxTokens: number
       embeddingModel: string | null
       embeddingDimensions: number
+      embeddingBaseUrl: string | null
+      apiKey: string | null
+      embeddingApiKey: string | null
       configured: boolean
     }
     db: { path: string }

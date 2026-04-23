@@ -31,6 +31,8 @@ export default defineNitroConfig({
     llmApiKey: process.env.LLM_API_KEY ?? '',
     llmBaseUrl: process.env.LLM_BASE_URL ?? '',
     llmChatModel: process.env.LLM_CHAT_MODEL ?? 'gpt-4o-mini',
+    llmTemperature: parseFloat(process.env.LLM_TEMPERATURE ?? '0.3'),
+    llmMaxTokens: parseInt(process.env.LLM_MAX_TOKENS ?? '1024'),
     llmEmbeddingModel: process.env.LLM_EMBEDDING_MODEL ?? 'text-embedding-3-small',
     llmEmbeddingDimensions: parseInt(process.env.LLM_EMBEDDING_DIMENSIONS ?? '1536'),
     // For Anthropic: separate embedding endpoint

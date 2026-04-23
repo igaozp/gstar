@@ -14,7 +14,7 @@ export default defineTask<AnalyzePendingResult>({
     description: 'Analyze pending repos with LLM: generate summary, keywords, and embeddings',
   },
   async run() {
-    const config = useRuntimeConfig()
+    const config = getEffectiveAppConfig()
     if (!config.llmApiKey) {
       console.warn('[analyze:pending] LLM not configured, skipping')
       return { result: { processed: 0, reason: 'LLM not configured' } }

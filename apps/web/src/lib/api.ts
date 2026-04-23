@@ -66,4 +66,10 @@ export const api = {
     }),
 
   config: () => apiFetch<ConfigData>('/api/config'),
+
+  updateConfig: (body: Record<string, unknown>) =>
+    apiFetch<ConfigData>('/api/config', {
+      method: 'PUT',
+      body: JSON.stringify(body),
+    }),
 }
