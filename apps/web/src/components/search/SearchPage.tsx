@@ -13,8 +13,20 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { StarCard } from '@/components/stars/StarCard'
 import { api } from '@/lib/api'
 import type { SearchResult, SearchStrategy } from '@/lib/types'
+import { createTranslator, type Locale, type MessageKey } from '@/lib/i18n'
 
-export function SearchPage() {
+const strategyLabels: Record<SearchStrategy, MessageKey> = {
+  hybrid: 'search.strategy.hybrid',
+  vector: 'search.strategy.vector',
+  keyword: 'search.strategy.keyword',
+}
+
+interface Props {
+  locale: Locale
+}
+
+export function SearchPage({ locale }: Props) {
+  const t = createTranslator(locale)
   const [query, setQuery] = useState('')
   const [strategy, setStrategy] = useState<SearchStrategy>('hybrid')
   const [results, setResults] = useState<SearchResult[]>([])
@@ -39,7 +51,7 @@ export function SearchPage() {
       setMeta(res.meta)
       setHasSearched(true)
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Search failed')
+      setError(e instanceof Error ? e.message : t('search.failed'))
       setResults([])
     } finally {
       setLoading(false)
@@ -71,22 +83,22 @@ export function SearchPage() {
         <div className="space-y-7">
           <div className="inline-flex items-center gap-2 border border-border bg-background px-3 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.26em] text-muted-foreground">
             <Sparkles className="size-3.5" />
-            Hybrid semantic retrieval
+            {t('search.badge')}
           </div>
           <div className="space-y-4">
             <h1 className="font-heading text-5xl font-semibold leading-[0.95] tracking-tight text-foreground sm:text-6xl lg:text-7xl">
-              Search your starred universe.
+              {t('search.title')}
             </h1>
             <p className="max-w-2xl text-base leading-8 text-muted-foreground">
-              Query repository names, descriptions, AI summaries, keywords, and embeddings with one focused command surface.
+              {t('search.description')}
             </p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="self-end border border-border bg-background p-4 shadow-sm sm:p-5">
           <div className="mb-4 flex items-center justify-between gap-3 border-b border-border pb-3">
-            <span className="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">Command</span>
-            <span className="text-xs text-muted-foreground">⌘ search</span>
+            <span className="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">{t('search.command')}</span>
+            <span className="text-xs text-muted-foreground">⌘ {t('search.shortcut')}</span>
           </div>
           <div className="grid gap-4">
             <div className="relative">
@@ -94,7 +106,7 @@ export function SearchPage() {
               <Input
                 value={query}
                 onChange={handleQueryChange}
-                placeholder="machine learning, state management, HTTP client"
+                placeholder={t('search.placeholder')}
                 className="h-14 border-b-foreground/20 pl-7 font-heading text-xl"
                 autoFocus
               />
@@ -105,14 +117,14 @@ export function SearchPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="hybrid">Hybrid</SelectItem>
-                  <SelectItem value="vector">Semantic</SelectItem>
-                  <SelectItem value="keyword">Keyword</SelectItem>
+                  <SelectItem value="hybrid">{t('search.strategy.hybrid')}</SelectItem>
+                  <SelectItem value="vector">{t('search.strategy.vector')}</SelectItem>
+                  <SelectItem value="keyword">{t('search.strategy.keyword')}</SelectItem>
                 </SelectContent>
               </Select>
               <Button type="submit" disabled={loading || !query.trim()} className="h-11">
                 {loading ? <Loader2 className="animate-spin" /> : <ArrowUpRight />}
-                Search
+                {t('search.submit')}
               </Button>
             </div>
           </div>
@@ -143,19 +155,19 @@ export function SearchPage() {
         <div className="space-y-5">
           <div className="flex flex-wrap items-end justify-between gap-4 border-b border-border pb-4">
             <div>
-              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">Results</p>
+              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">{t('search.results')}</p>
               <h2 className="mt-2 font-heading text-3xl font-semibold">
-                {meta.total} matches for “{meta.query}”
+                {t('search.matchesFor', { count: meta.total.toLocaleString(locale), query: meta.query })}
               </h2>
             </div>
             <p className="border border-border bg-card px-3 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-              {meta.strategy} · {meta.took_ms}ms
+              {t(strategyLabels[meta.strategy as SearchStrategy] ?? 'search.strategy.hybrid')} · {meta.took_ms.toLocaleString(locale)}ms
             </p>
           </div>
           {results.length === 0 ? (
             <div className="border border-dashed border-border bg-card/70 p-12 text-center">
-              <p className="font-heading text-2xl font-semibold">No signal found</p>
-              <p className="mt-2 text-sm text-muted-foreground">Try a different query or switch to keyword search.</p>
+              <p className="font-heading text-2xl font-semibold">{t('search.empty.title')}</p>
+              <p className="mt-2 text-sm text-muted-foreground">{t('search.empty.description')}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
@@ -165,6 +177,7 @@ export function SearchPage() {
                   star={star}
                   score={star.score}
                   href={`/stars/${star.id}`}
+                  locale={locale}
                 />
               ))}
             </div>
@@ -176,15 +189,15 @@ export function SearchPage() {
         <div className="grid gap-4 border border-dashed border-border bg-card/60 p-10 text-center text-muted-foreground sm:grid-cols-3 sm:text-left">
           <div>
             <p className="font-heading text-2xl text-foreground">01</p>
-            <p className="mt-2 text-sm">Start with a fuzzy idea.</p>
+            <p className="mt-2 text-sm">{t('search.guide.1')}</p>
           </div>
           <div>
             <p className="font-heading text-2xl text-foreground">02</p>
-            <p className="mt-2 text-sm">Choose hybrid, semantic, or keyword mode.</p>
+            <p className="mt-2 text-sm">{t('search.guide.2')}</p>
           </div>
           <div>
             <p className="font-heading text-2xl text-foreground">03</p>
-            <p className="mt-2 text-sm">Open the strongest repository matches.</p>
+            <p className="mt-2 text-sm">{t('search.guide.3')}</p>
           </div>
         </div>
       )}

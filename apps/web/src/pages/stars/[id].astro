@@ -3,7 +3,10 @@ import Base from '@/layouts/Base.astro'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { api } from '@/lib/api'
+import { createTranslator, getRequestLocale } from '@/lib/i18n'
 
+const locale = getRequestLocale(Astro.request)
+const t = createTranslator(locale)
 const { id } = Astro.params
 
 let star
@@ -15,19 +18,19 @@ try {
 }
 
 function fmt(iso: string) {
-  return new Date(iso).toLocaleDateString('en-US', {
+  return new Date(iso).toLocaleDateString(locale, {
     year: 'numeric', month: 'short', day: 'numeric',
   })
 }
 ---
 
-<Base title={star.fullName}>
+<Base title={star.fullName} locale={locale}>
   <div class="mx-auto max-w-6xl space-y-8">
     <section class="border border-border bg-card/80 p-6 shadow-sm lg:p-10">
       <div class="flex flex-wrap items-center gap-3">
-        <Badge variant="secondary">{star.language ?? 'Unknown'}</Badge>
-        {star.isArchived && <Badge variant="outline">archived</Badge>}
-        {star.isFork && <Badge variant="outline">fork</Badge>}
+        <Badge variant="secondary">{star.language ?? t('star.unknown')}</Badge>
+        {star.isArchived && <Badge variant="outline">{t('star.archived')}</Badge>}
+        {star.isFork && <Badge variant="outline">{t('star.fork')}</Badge>}
       </div>
       <h1 class="mt-5 max-w-4xl font-heading text-5xl font-semibold leading-none tracking-tight sm:text-6xl">
         {star.fullName}
@@ -42,7 +45,7 @@ function fmt(iso: string) {
           rel="noopener noreferrer"
           class="inline-flex border border-border bg-foreground px-5 py-3 text-xs font-semibold uppercase tracking-[0.22em] text-background transition-opacity hover:opacity-80"
         >
-          View on GitHub
+          {t('star.viewOnGithub')}
         </a>
         {star.homepage && (
           <a
@@ -51,7 +54,7 @@ function fmt(iso: string) {
             rel="noopener noreferrer"
             class="inline-flex border border-border bg-background px-5 py-3 text-xs font-semibold uppercase tracking-[0.22em] text-foreground transition-colors hover:bg-muted"
           >
-            Homepage
+            {t('star.homepage')}
           </a>
         )}
       </div>
@@ -59,26 +62,26 @@ function fmt(iso: string) {
 
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <div class="border border-border bg-card p-5 shadow-sm">
-        <div class="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">Stars</div>
-        <div class="mt-3 font-heading text-4xl font-semibold">{star.stargazersCount.toLocaleString()}</div>
+        <div class="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">{t('star.stars')}</div>
+        <div class="mt-3 font-heading text-4xl font-semibold">{star.stargazersCount.toLocaleString(locale)}</div>
       </div>
       <div class="border border-border bg-card p-5 shadow-sm">
-        <div class="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">Forks</div>
-        <div class="mt-3 font-heading text-4xl font-semibold">{star.forksCount.toLocaleString()}</div>
+        <div class="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">{t('star.forks')}</div>
+        <div class="mt-3 font-heading text-4xl font-semibold">{star.forksCount.toLocaleString(locale)}</div>
       </div>
       <div class="border border-border bg-card p-5 shadow-sm">
-        <div class="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">Language</div>
+        <div class="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">{t('star.language')}</div>
         <div class="mt-3 font-heading text-4xl font-semibold">{star.language ?? '—'}</div>
       </div>
       <div class="border border-border bg-card p-5 shadow-sm">
-        <div class="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">Starred</div>
+        <div class="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">{t('star.starred')}</div>
         <div class="mt-3 font-heading text-3xl font-semibold">{fmt(star.starredAt)}</div>
       </div>
     </div>
 
     {star.topics && star.topics.length > 0 && (
       <section class="border border-border bg-card p-6 shadow-sm">
-        <h2 class="mb-4 text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">Topics</h2>
+        <h2 class="mb-4 text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">{t('star.topics')}</h2>
         <div class="flex flex-wrap gap-3">
           {star.topics.map((t: string) => (
             <Badge variant="secondary">{t}</Badge>
@@ -90,7 +93,7 @@ function fmt(iso: string) {
     {star.aiSummary ? (
       <section class="border border-border bg-card p-6 shadow-sm lg:p-8">
         <div class="mb-5 flex items-center justify-between gap-4">
-          <h2 class="font-heading text-3xl font-semibold">AI Summary</h2>
+          <h2 class="font-heading text-3xl font-semibold">{t('star.aiSummary')}</h2>
           <Separator className="hidden flex-1 lg:block" />
         </div>
         <p class="max-w-4xl text-base leading-8 text-muted-foreground">{star.aiSummary}</p>
@@ -102,15 +105,15 @@ function fmt(iso: string) {
           </div>
         )}
         <div class="mt-6 flex flex-wrap gap-4 border-t border-border pt-5 text-xs text-muted-foreground">
-          {star.analysisModel && <span>Model: {star.analysisModel}</span>}
-          {star.analyzedAt && <span>Analyzed: {fmt(star.analyzedAt)}</span>}
-          {star.embeddingModel && <span>Embedding: {star.embeddingModel} ({star.dimensions}d)</span>}
+          {star.analysisModel && <span>{t('star.model')}: {star.analysisModel}</span>}
+          {star.analyzedAt && <span>{t('star.analyzedAt')}: {fmt(star.analyzedAt)}</span>}
+          {star.embeddingModel && <span>{t('star.embedding')}: {star.embeddingModel} ({star.dimensions}d)</span>}
         </div>
       </section>
     ) : (
       <div class="border border-dashed border-border bg-card/70 p-10 text-center">
-        <h2 class="font-heading text-2xl font-semibold">Analysis pending</h2>
-        <p class="mt-2 text-sm text-muted-foreground">This repository has not been analyzed yet. Run the analyzer to generate an AI summary.</p>
+        <h2 class="font-heading text-2xl font-semibold">{t('star.analysisPending.title')}</h2>
+        <p class="mt-2 text-sm text-muted-foreground">{t('star.analysisPending.description')}</p>
       </div>
     )}
   </div>

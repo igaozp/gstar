@@ -1,16 +1,18 @@
 ---
 import Nav from '@/components/layout/Nav.astro'
 import '@/styles/globals.css'
+import { getRequestLocale, localeDir, localeTags, type Locale } from '@/lib/i18n'
 
 export interface Props {
   title?: string
+  locale?: Locale
 }
 
-const { title = 'gstar' } = Astro.props
+const { title = 'gstar', locale = getRequestLocale(Astro.request) } = Astro.props
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={localeTags[locale]} dir={localeDir(locale)}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -24,7 +26,7 @@ const { title = 'gstar' } = Astro.props
       <div class="absolute -right-32 top-24 h-80 w-80 rounded-full border border-border/70"></div>
       <div class="absolute -left-24 bottom-10 h-72 w-72 rounded-full border border-border/70"></div>
     </div>
-    <Nav />
+    <Nav locale={locale} />
     <main class="mx-auto w-full max-w-[1480px] px-4 py-8 sm:px-6 lg:px-10 lg:py-12">
       <slot />
     </main>

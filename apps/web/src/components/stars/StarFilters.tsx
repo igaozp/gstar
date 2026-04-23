@@ -7,12 +7,15 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
+import { createTranslator, type Locale } from '@/lib/i18n'
 
 interface Props {
   languages: string[]
+  locale: Locale
 }
 
-export function StarFilters({ languages }: Props) {
+export function StarFilters({ languages, locale }: Props) {
+  const t = createTranslator(locale)
   const [language, setLanguage] = useState<string>('')
   const [analyzed, setAnalyzed] = useState<string>('')
 
@@ -59,10 +62,10 @@ export function StarFilters({ languages }: Props) {
     <div className="flex flex-wrap items-center gap-3 border border-border bg-card p-3 shadow-sm">
       <Select value={language || '__all__'} onValueChange={handleLanguage}>
         <SelectTrigger className="h-10 w-[180px]">
-          <SelectValue placeholder="Language" />
+          <SelectValue placeholder={t('filters.language')} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="__all__">All languages</SelectItem>
+          <SelectItem value="__all__">{t('filters.allLanguages')}</SelectItem>
           {languages.map((l) => (
             <SelectItem key={l} value={l}>{l}</SelectItem>
           ))}
@@ -71,18 +74,18 @@ export function StarFilters({ languages }: Props) {
 
       <Select value={analyzed || '__all__'} onValueChange={handleAnalyzed}>
         <SelectTrigger className="h-10 w-[170px]">
-          <SelectValue placeholder="Analysis" />
+          <SelectValue placeholder={t('filters.analysis')} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="__all__">All</SelectItem>
-          <SelectItem value="true">Analyzed</SelectItem>
-          <SelectItem value="false">Pending</SelectItem>
+          <SelectItem value="__all__">{t('filters.all')}</SelectItem>
+          <SelectItem value="true">{t('filters.analyzed')}</SelectItem>
+          <SelectItem value="false">{t('filters.pending')}</SelectItem>
         </SelectContent>
       </Select>
 
       {hasFilters && (
         <Button variant="ghost" size="sm" onClick={handleReset}>
-          Clear
+          {t('filters.clear')}
         </Button>
       )}
     </div>

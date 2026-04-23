@@ -1,8 +1,12 @@
 ---
 import Base from '@/layouts/Base.astro'
 import { SearchPage } from '@/components/search/SearchPage'
+import { createTranslator, getRequestLocale } from '@/lib/i18n'
+
+const locale = getRequestLocale(Astro.request)
+const t = createTranslator(locale)
 ---
 
-<Base title="Search">
-  <SearchPage client:load />
+<Base title={t('page.search.title')} locale={locale}>
+  <SearchPage client:load locale={locale} />
 </Base>

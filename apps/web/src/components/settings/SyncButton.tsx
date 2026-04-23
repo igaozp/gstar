@@ -3,10 +3,16 @@ import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { RefreshCw, CheckCircle, XCircle } from 'lucide-react'
 import { api } from '@/lib/api'
+import { createTranslator, type Locale } from '@/lib/i18n'
 
 type Status = { ok: true; synced: number } | { ok: false; error: string } | null
 
-export function SyncButton() {
+interface Props {
+  locale: Locale
+}
+
+export function SyncButton({ locale }: Props) {
+  const t = createTranslator(locale)
   const [loading, setLoading] = useState<'incremental' | 'full' | null>(null)
   const [status, setStatus] = useState<Status>(null)
 
@@ -19,7 +25,7 @@ export function SyncButton() {
       const synced = data?.result?.synced ?? 0
       setStatus({ ok: true, synced })
     } catch (e) {
-      setStatus({ ok: false, error: e instanceof Error ? e.message : 'Unknown error' })
+      setStatus({ ok: false, error: e instanceof Error ? e.message : t('sync.unknownError') })
     } finally {
       setLoading(null)
     }
@@ -34,7 +40,7 @@ export function SyncButton() {
           disabled={loading !== null}
           onClick={() => handleSync('incremental')}
         >
-          Incremental Sync
+          {t('sync.incremental')}
           <RefreshCw className={loading === 'incremental' ? 'animate-spin' : ''} />
         </Button>
         <Button
@@ -43,7 +49,7 @@ export function SyncButton() {
           disabled={loading !== null}
           onClick={() => handleSync('full')}
         >
-          Full Sync
+          {t('sync.full')}
           <RefreshCw className={loading === 'full' ? 'animate-spin' : ''} />
         </Button>
       </div>
@@ -57,8 +63,8 @@ export function SyncButton() {
           <AlertDescription>
             {status.ok
               ? status.synced > 0
-                ? `Synced ${status.synced} repositories.`
-                : 'Already up to date.'
+                ? t('sync.synced', { count: status.synced.toLocaleString(locale) })
+                : t('sync.upToDate')
               : status.error
             }
           </AlertDescription>

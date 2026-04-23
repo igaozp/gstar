@@ -3,11 +3,13 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import type { Star as StarType } from '@/lib/types'
+import { createTranslator, type Locale } from '@/lib/i18n'
 
 interface Props {
   star: StarType
   score?: number
   href?: string
+  locale: Locale
 }
 
 const LANGUAGE_COLORS: Record<string, string> = {
@@ -28,7 +30,9 @@ const LANGUAGE_COLORS: Record<string, string> = {
   Vue: 'bg-emerald-500',
 }
 
-function CardBody({ star, score, href }: Props) {
+function CardBody({ star, score, href, locale }: Props) {
+  const t = createTranslator(locale)
+
   return (
     <Card className="h-full border border-border bg-card/90 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
       <CardHeader>
@@ -36,7 +40,7 @@ function CardBody({ star, score, href }: Props) {
           <div className="min-w-0 space-y-3">
             <div className="flex flex-wrap items-center gap-2">
               <p className="truncate font-heading text-xl font-semibold tracking-wide">{star.fullName}</p>
-              {star.isArchived && <Badge variant="outline">archived</Badge>}
+              {star.isArchived && <Badge variant="outline">{t('star.archived')}</Badge>}
             </div>
             {star.description && (
               <p className="line-clamp-2 text-sm leading-6 text-muted-foreground">{star.description}</p>
@@ -44,7 +48,7 @@ function CardBody({ star, score, href }: Props) {
           </div>
           {score !== undefined && (
             <span className="shrink-0 border border-border bg-background px-2 py-1 font-mono text-xs text-muted-foreground">
-              {(score * 100).toFixed(0)}%
+              {(score * 100).toLocaleString(locale, { maximumFractionDigits: 0 })}%
             </span>
           )}
         </div>
@@ -77,14 +81,14 @@ function CardBody({ star, score, href }: Props) {
               {star.language}
             </span>
           )}
-          <span className="flex items-center gap-1.5"><Star className="size-3.5" />{star.stargazersCount.toLocaleString()}</span>
-          <span className="flex items-center gap-1.5"><GitFork className="size-3.5" />{star.forksCount.toLocaleString()}</span>
-          {star.analyzedAt && <span className="flex items-center gap-1.5"><Cpu className="size-3.5" />analyzed</span>}
+          <span className="flex items-center gap-1.5"><Star className="size-3.5" />{star.stargazersCount.toLocaleString(locale)}</span>
+          <span className="flex items-center gap-1.5"><GitFork className="size-3.5" />{star.forksCount.toLocaleString(locale)}</span>
+          {star.analyzedAt && <span className="flex items-center gap-1.5"><Cpu className="size-3.5" />{t('star.analyzed')}</span>}
         </div>
         <div className="flex items-center gap-3">
           {href && (
             <a href={href} className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-foreground hover:text-muted-foreground">
-              Details <ArrowUpRight className="size-3.5" />
+              {t('star.details')} <ArrowUpRight className="size-3.5" />
             </a>
           )}
           <a
@@ -93,7 +97,7 @@ function CardBody({ star, score, href }: Props) {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground"
           >
-            GitHub <ExternalLink className="size-3.5" />
+            {t('star.github')} <ExternalLink className="size-3.5" />
           </a>
         </div>
       </CardFooter>
@@ -101,6 +105,6 @@ function CardBody({ star, score, href }: Props) {
   )
 }
 
-export function StarCard({ star, score, href }: Props) {
-  return <CardBody star={star} score={score} href={href} />
+export function StarCard({ star, score, href, locale }: Props) {
+  return <CardBody star={star} score={score} href={href} locale={locale} />
 }

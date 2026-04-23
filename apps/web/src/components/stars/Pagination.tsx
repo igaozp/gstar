@@ -1,13 +1,16 @@
 import { Button } from '@/components/ui/button'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { createTranslator, type Locale } from '@/lib/i18n'
 
 interface Props {
   page: number
   pages: number
   total: number
+  locale: Locale
 }
 
-export function Pagination({ page, pages, total }: Props) {
+export function Pagination({ page, pages, total, locale }: Props) {
+  const t = createTranslator(locale)
   function goTo(p: number) {
     const params = new URLSearchParams(window.location.search)
     params.set('page', String(p))
@@ -23,7 +26,7 @@ export function Pagination({ page, pages, total }: Props) {
   return (
     <div className="mt-8 flex flex-col gap-4 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
       <p className="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-        {total.toLocaleString()} repositories indexed
+        {t('stars.indexed', { count: total.toLocaleString(locale) })}
       </p>
       <div className="flex flex-wrap items-center gap-1">
         <Button
